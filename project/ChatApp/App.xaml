@@ -1,0 +1,11 @@
+﻿<Application x:Class="ChatApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ChatApp"
+             xmlns:view="clr-namespace:ChatApp.View"
+             xmlns:viewodel="clr-namespace:ChatApp.ViewModel"
+             StartupUri="View/LogIn.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>
