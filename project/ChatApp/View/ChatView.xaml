@@ -8,7 +8,7 @@
         Title="ChatView" Height="450" Width="800">
     <Grid>
         <Label Content="Chat:" HorizontalAlignment="Left" Margin="310,175,0,0" VerticalAlignment="Top"/>
-         <TextBox HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Width="200" Height="50" RenderTransformOrigin="0.5,0.5" Grid.Column="1" Text="{Binding Path=Chat, Mode=TwoWay}">
+        <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" Height="50" RenderTransformOrigin="0.5,0.5" Text="{Binding Path=Chat, Mode=TwoWay}" Margin="310,206,0,0">
             <TextBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>

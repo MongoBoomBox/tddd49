@@ -16,6 +16,8 @@ namespace ChatApp.Model
     {
 
         private NetworkStream stream;
+        private TcpClient client;
+        public bool? clientvalue = null; 
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -40,18 +42,23 @@ namespace ChatApp.Model
             Task.Factory.StartNew(() => {
                 var ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
                 TcpListener server = new TcpListener(ipEndPoint);
-                TcpClient endPoint = null;
                 try
                 {
                     server.Start();
                     System.Diagnostics.Debug.WriteLine("Start listening...");
-                    endPoint = server.AcceptTcpClient();
+                    client = server.AcceptTcpClient();
                     System.Diagnostics.Debug.WriteLine("Connection accepted!");
-                    handleConnection(endPoint);
+                    handleConnection(client);
                 }
-                catch 
+                catch (Exception e)
                 {
-                    Debug.WriteLine("Error: ");
+                    Debug.WriteLine(("Error in startServerAsHost: " + e));
+                }
+                finally
+                {
+                    Debug.WriteLine(("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+                    Console.WriteLine(("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+                    server.Stop();
                 }
             });            
         }
@@ -60,68 +67,106 @@ namespace ChatApp.Model
         {
             Task.Factory.StartNew(() => {
                 var ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-                TcpListener server = new TcpListener(ipEndPoint);
-                TcpClient endPoint = new TcpClient();
+                client = new TcpClient();
+                // try
+                // {
+                //     while (!endPoint.Connected)
+                //     {
+                //         endPoint.Connect(ipEndPoint);
+                //     }
+                    
+                //     clientvalue = true;
+                //     handleConnection(endPoint);
+                // }
+                // catch (Exception e)
+                // {
+                //     clientvalue = false;
+                //     Console.WriteLine("Exception: ", e);
+                // }
+                
+                // finally                    
+                // {
+                //     endPoint.Close();
+                //     clientvalue = false;
+                // }
+                
                 try
                 {
                     System.Diagnostics.Debug.WriteLine("Connecting to the server...");
-                    endPoint.Connect(ipEndPoint);
+                    client.Connect(ipEndPoint);
                     System.Diagnostics.Debug.WriteLine("Connection established!");
-                    handleConnection(endPoint);
+                    clientvalue = true;
+                    handleConnection(client);
+               
+                }
+                catch (Exception e)
+                {
+                    clientvalue = false;
+                    Debug.WriteLine(("Error in joinServerAsClient: " + e));
                 }
                 finally                    
                 {
-                    endPoint.Close();
-                }
-            }); 
-        }
-
-        public void startConnection(string ip, int port, string type)
-        {
-
-
-            Task.Factory.StartNew(() =>
-            {
-                bool secondTry = false;
-                var ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-                TcpListener server = new TcpListener(ipEndPoint);
-                TcpClient endPoint = null;
-                try
-                {
-
-                    server.Start();
-                    System.Diagnostics.Debug.WriteLine("Start listening...");
-                    endPoint = server.AcceptTcpClient();
-                    System.Diagnostics.Debug.WriteLine("Connection accepted!");
-                    handleConnection(endPoint);
-
-                }
-                catch
-                {
-
-                    secondTry = true;
-                }
-               
-
-                if (secondTry)
-                {
-
-                    endPoint = new TcpClient();
-                    try
-                    {
-                        System.Diagnostics.Debug.WriteLine("Connecting to the server...");
-                        endPoint.Connect(ipEndPoint);
-                        System.Diagnostics.Debug.WriteLine("Connection established!");
-                        handleConnection(endPoint);
-                    }
-                    finally                    {
-                        endPoint.Close();
-
-                    }
-                }
+                    
+                    Debug.WriteLine(("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"));
+                    Console.WriteLine(("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"));
+                    client.Close();
+                    clientvalue = null;
+                } 
             });
 
+            
         }
+
+       
+
+        // public void startConnection(string ip, int port, string type)
+        // {
+
+
+        //     Task.Factory.StartNew(() =>
+        //     {
+        //         bool secondTry = false;
+        //         var ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+        //         TcpListener server = new TcpListener(ipEndPoint);
+        //         TcpClient endPoint = null;
+        //         try
+        //         {
+
+        //             server.Start();
+        //             System.Diagnostics.Debug.WriteLine("Start listening...");
+        //             endPoint = server.AcceptTcpClient();
+        //             System.Diagnostics.Debug.WriteLine("Connection accepted!");
+        //             handleConnection(endPoint);
+
+        //         }
+        //         catch
+        //         {
+
+        //             secondTry = true;
+        //         }
+               
+
+        //         if (secondTry)
+        //         {
+
+        //             endPoint = new TcpClient();
+        //             try
+        //             {
+        //                 System.Diagnostics.Debug.WriteLine("Connecting to the server...");
+        //                 endPoint.Connect(ipEndPoint);
+        //                 System.Diagnostics.Debug.WriteLine("Connection established!");
+        //                 handleConnection(endPoint);
+        //             }
+        //             finally                    {
+        //                 endPoint.Close();
+
+        //             }
+        //         }
+        //     });
+
+        // }
+
+
         private void handleConnection(TcpClient endPoint)
         {
             stream = endPoint.GetStream();

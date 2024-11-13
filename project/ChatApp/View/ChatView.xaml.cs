@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Linq;
+using ChatApp.Model;
+using ChatApp.ViewModel;
 
 namespace ChatApp.View
 {
@@ -22,6 +25,12 @@ namespace ChatApp.View
         public ChatView()
         {
             InitializeComponent();
+        }
+        
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
         }
     }
 }

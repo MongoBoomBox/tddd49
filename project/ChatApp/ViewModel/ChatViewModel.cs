@@ -18,10 +18,12 @@ namespace ChatApp.ViewModel
     {
 
         internal string name = "NAME";
-        internal int port;
+        internal int port = 3000;
         internal string ip = "127.0.0.1";
-        internal TCP tcp;
-        
+
+
+        internal string chat = "test123";
+
 
         private NetworkManager NetworkManager { get; set; }
 
@@ -62,7 +64,7 @@ namespace ChatApp.ViewModel
             set
             {
                 port = value;
-                OnPropertyChanged("port");
+                OnPropertyChanged("Port");
             }
 
         }
@@ -81,10 +83,23 @@ namespace ChatApp.ViewModel
             } 
         }
 
-        private void startConnection()
+        public string Chat
         {
-            NetworkManager.startConnection(ip, port, "");
+            get
+            {
+                return chat;
+            }
+            set
+            {
+                chat = value;
+                OnPropertyChanged("Chat");
+            }
         }
+
+        // private void startConnection()
+        // {
+        //     NetworkManager.startConnection(ip, port, "");
+        // }
 
         private ICommand host;
         public ICommand Host
@@ -105,16 +120,20 @@ namespace ChatApp.ViewModel
 
         public void hostServer()
         {
-            //Thread t = new Thread(startConnection);
-            //t.Start();
-            //gör det som ska göras
-            NetworkManager.startServerAsHost(ip,port);
-            ChatView chat = new ChatView();
-            chat.DataContext = this;
-            chat.Show();
-
-
-            MessageBox.Show("Wow, Hosting!");
+            try
+            {
+                //Thread t = new Thread(startConnection);
+                //t.Start();
+                //gör det som ska göras
+                NetworkManager.startServerAsHost(ip,port);
+                ChatView chat = new ChatView();
+                chat.DataContext = this;
+                chat.Show();
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine("Error in hostServer: " + e);
+            }
         }
         private ICommand join;
         public ICommand Join
@@ -134,13 +153,24 @@ namespace ChatApp.ViewModel
         }
 
         public void joinServer()
-        {
+        {  
             NetworkManager.joinServerAsClient(ip, port);
-            ChatView chat = new ChatView();
-            chat.DataContext = this;
+            
+            while( NetworkManager.clientvalue == null)
+            {}
+            if (NetworkManager.clientvalue == true)
+            { 
+              
+                ChatView chat = new ChatView();
+                chat.DataContext = this;
                 //chat.ShowDialog();
-            chat.Show();
-           
+                chat.Show();
+            }
+            else
+            {
+                MessageBox.Show("Server at ip " + ip + " and port " + port + " is not open!");
+                NetworkManager.clientvalue = null;
+            }
         }
     }
 }
